@@ -1,0 +1,15 @@
+body { 
+    padding-top: 30px; 
+    height: 100%;
+}
+
+td {
+    border: 1px solid #a434eb;
+    width: 30px;
+    height: 30px;
+    background-color: #d9fffe;
+}
+
+table {
+	border-collapse: collapse;
+}
