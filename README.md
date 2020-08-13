@@ -1,6 +1,8 @@
+Link to the website to see the working of the project: https://goku-instinct.github.io/Project-Mars-Rover/
+
 This is an AI based project with interactive GUI for on finding a path from source to destination avoiding obstacles using algorithms like:
-# (DFS)Depth First Searach
-# (BFS)Breadth First Search
+* (DFS)Depth First Searach
+* (BFS)Breadth First Search
 
 Languages Used:
 - HTML5
