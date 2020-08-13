@@ -1,36 +1,122 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="description" content="A small project based on my knowledge of html, css and javascript">
 	<title>Mars Rover</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="styles/magic.min.css">
 	<link rel="stylesheet" type="text/css" href="styles/main.css">
+	<script src="https://kit.fontawesome.com/d1f3dd87b7.js" crossorigin="anonymous"></script>
 </head>
 <body>
-	<header>Lets go Ultra Instinct</header>
-	<h1><u>MARS ROVER PROJECT</u></h1>
-	<img src="images/marsrover.jpg" width='300' height='300' alt="a real picture of a mars rover">
-	<div>Home</div>
-	<a href="#dilmangemore" title="get more projects">More projects</a>
-	<h2>You are gonna see an amazing project within 7 days on finding shortest distance for a spaceship to reach its destination on planet MARS</h2>
-	This is gonna look like <a href="https://qiao.github.io/PathFinding.js/visual/" target="_blank" title="Helps taken from here">this
-	</a>
-	<div>
-		Using following knowledge for this :   -
-		<ul>
-			<li>html for structuring</li>
-			<li>css for styling</li>
-			<li>js for backend</li>
-		</ul>
-	<h3><p align="center">The Grid for our Mars Rover is now established.</p></h3>
+	<nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-dark" id="myNavbar">
+  		<a class="navbar-brand" href="#" id="logo">MARS ROVER</a>
+  		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    		<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    	<ul class="navbar-nav mr-auto">
+		      	<li class="nav-item dropdown" id="algorithms">
+		        	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		          	Algorithms
+		        	</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					    <a class="dropdown-item" href="#">Breadth-First Search (BFS)</a>
+					    <a class="dropdown-item" href="#">Depth-First Search (DFS)</a>
+					</div>
+		      	</li>
+		      	<li class="nav-item dropdown" id="mazes">
+		      		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		          	Maze
+		        	</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					    <a class="dropdown-item" href="#">Random</a>
+					</div>
+				</li>
+		      	<li class="nav-item dropdown" id="speed">
+		      		<a class="nav-link dropdown-toggle speedDisplay" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		          	Speed: Fast
+		        	</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					    <a class="dropdown-item" href="#">Slow</a>
+					    <a class="dropdown-item" href="#">Normal</a>
+					    <a class="dropdown-item" href="#">Fast</a>
+					</div>
+				</li>
+	    	</ul>
+	      	<button class="btn btn-outline-success btn-space" type="submit" id="startBtn">Start</button>
+	      	<button type="button" class="btn btn-outline-warning btn-space" type="submit" id="clearBtn">Clear Board</button>
+  		</div>
+ 	</nav>
+ 	<div>
+ 		<h4>Instrutions: </h4>
+ 		<ol>
+ 			<li>Select an Algorithm from the navigation bar.</li>
+ 			<li>
+ 				Optional-
+ 				<ul>
+ 					<li>Can shift the source and destination by dragging them to the required position.</li>
+ 					<li>Create walls by clicking or dragging mouse pointer inside the grid</li>
+ 					<li>Can also choose to make random walls using mazes option in navigation bar.</li>
+ 					<li>Select speed for the animation to run from nav bar.</li>
+ 				</ul>
+ 			</li>
+ 			<li>Click start button on the right top corner.</li>
+ 		</ol>
+ 		<b>All set. Let's go. Enjoy the animation.</b>
+ 	</div>
+ 	<br>
+ 	<center><h4>----------- Legends ----------<h4></center>
+ 	<div class="d-flex flex-row flex-wrap m-2 justify-content-around">	
+ 		<div class="d-flex p-2">
+ 			<div class="key wall"></div>  
+ 			<div> Wall</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key start"></div>  
+ 			<div>Start</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key end"></div>  
+ 			<div>Target</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key searching"></div>  
+ 			<div class="key visited"></div>  
+ 			<div>Visited</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key success"></div>  
+ 			<div>Shortest-Path</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key"></div>  
+ 			<div>Unvisited</div>
+ 		</div>
+ 	</div>
+
+ 	<div class="d-flex flex-column align-items-center" id="bigTableContainer">
+		<div id="tableContainer"></div>
+ 	</div>
+
+	<div class ="d-flex flex-column" id="results">
+		<div class="d-flex justify-content-center"> 
+			<i id="resultsIcon" class="fas fa-exclamation"></i>
+		</div>
+		<div id="duration" class="d-flex justify-content-center"> 
+	 		Please select an algorithm and press start.
+	 	</div>
+	 	<div id="length" class="d-flex justify-content-center"> 	
+	 	</div>	 	
 	</div>
-	<div id="base" align='center' style="overflow-x:auto;"></div>
-	<br><br>	
-	<section id="dilmangemore"><h3>Stay tuned!!!....after some weeks there will be more links of some projects.</h3></section>
-	<aside>After this Mars Rovering project is over, next coming up a project on a very basic game TTT&nbsp;(&nbsp;tic&nbsp;tac&nbsp;toe&nbsp;)</aside>
-	<footer>&copy; My Handle on GIT : <a href="https://github.com/GOKU-Instinct" target="_blank" title="Link to github profile"><B>GOKU-Instinct</B></a></footer>
+
+	<br>
+	<footer>For more projects, visit my GITHUB profile: <a href="https://github.com/GOKU-Instinct" target="_blank" title="Link to github profile"><B>GOKU-Instinct</B></a></footer>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="js/script.js"></script>
 </body>
 </html>
-
-<!-- You will be able to select the starting point and destination for the mars rover. And will also be able to put some obstacles in between on its path. This intelligent project is gonna tell you the shortest possible path ( if possible ) from source to destination. -->
