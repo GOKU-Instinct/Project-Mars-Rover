@@ -3,6 +3,8 @@ Link to the website to see the working of the project: https://goku-instinct.git
 This is an AI based project with interactive GUI for on finding a path from source to destination avoiding obstacles using algorithms like:
 * (DFS)Depth First Searach
 * (BFS)Breadth First Search
+* Dijkstra's Algorithm
+* A Star (A\*) Algorithm 
 
 Languages Used:
 - HTML5

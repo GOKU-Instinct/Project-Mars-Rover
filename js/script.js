@@ -1,5 +1,5 @@
 var totalRows = 25;
-var totalCols = 41;
+var totalCols = 51;
 var inProgress = false;
 var cellsToAnimate = [];
 var createWalls = false;
@@ -8,7 +8,7 @@ var justFinished = false;
 var animationSpeed = "Fast";
 var animationState = null;
 var startCell = [12, 13];
-var endCell = [12, 27];
+var endCell = [12, 37];
 var movingStart = false;
 var movingEnd = false;
 
@@ -48,6 +48,73 @@ function Queue() {
  	this.stack = new Array();
  	return;
  }
+}
+
+function minHeap() {
+	this.heap = [];
+	this.isEmpty = function(){
+		return (this.heap.length == 0);
+	}
+	this.clear = function(){
+		this.heap = [];
+		return;
+	}
+	this.getMin = function(){
+		if (this.isEmpty()){
+			return null;
+		}
+		var min = this.heap[0];
+		this.heap[0] = this.heap[this.heap.length - 1];
+		this.heap[this.heap.length - 1] = min;
+		this.heap.pop();
+		if (!this.isEmpty()){
+			this.siftDown(0);
+		}
+		return min;
+	}
+	this.push = function(item){
+		this.heap.push(item);
+		this.siftUp(this.heap.length - 1);
+		return;
+	}
+	this.parent = function(index){
+		if (index == 0){
+			return null;
+		}
+		return Math.floor((index - 1) / 2);
+	}
+	this.children = function(index){
+		return [(index * 2) + 1, (index * 2) + 2];
+	}
+	this.siftDown = function(index){
+		var children = this.children(index);
+		var leftChildValid = (children[0] <= (this.heap.length - 1));
+		var rightChildValid = (children[1] <= (this.heap.length - 1));
+		var newIndex = index;
+		if (leftChildValid && this.heap[newIndex][0] > this.heap[children[0]][0]){
+			newIndex = children[0];
+		}
+		if (rightChildValid && this.heap[newIndex][0] > this.heap[children[1]][0]){
+			newIndex = children[1];
+		}
+		// No sifting down needed
+		if (newIndex === index){ return; }
+		var val = this.heap[index];
+		this.heap[index] = this.heap[newIndex];
+		this.heap[newIndex] = val;
+		this.siftDown(newIndex);
+		return;
+	}
+	this.siftUp = function(index){
+		var parent = this.parent(index);
+		if (parent !== null && this.heap[index][0] < this.heap[parent][0]){
+			var val = this.heap[index];
+			this.heap[index] = this.heap[parent];
+			this.heap[parent] = val;
+			this.siftUp(parent);
+		}
+		return;
+	}
 }
 
 
@@ -196,8 +263,10 @@ function updateStartBtnText(){
 		$("#startBtn").html("Start DFS");
 	} else if (algorithm == "Breadth-First Search (BFS)"){
 		$("#startBtn").html("Start BFS");
-	} else if (algorithm == "Dijkstra"){
+	} else if (algorithm == "Dijkstra's Algorithm"){
 		$("#startBtn").html("Start Dijkstra");
+	} else if (algorithm == "A Star (A*) Search"){
+		$("#startBtn").html("Start A*");
 	}
 	return;
 }
@@ -266,7 +335,11 @@ function executeAlgo(){
 		var pathFound = DFS(startCell[0], startCell[1], visited);
 	} else if (algorithm == "Breadth-First Search (BFS)"){
 		var pathFound = BFS();
-	} 
+	} else if (algorithm == "Dijkstra's Algorithm"){
+		var pathFound = dijkstra();
+	} else if (algorithm == "A Star (A*) Search"){
+		var pathFound = AStar();
+	}  
 	return pathFound;
 }
 
@@ -370,6 +443,124 @@ function BFS(){
 			r = prevCell[0];
 			c = prevCell[1];
 			cellsToAnimate.push( [[r, c], "success"] );
+		}
+	}
+	return pathFound;
+}
+
+function dijkstra() {
+	var pathFound = false;
+	var myHeap = new minHeap();
+	var prev = createPrev();
+	var distances = createDistances();
+	var visited = createVisited();
+	distances[ startCell[0] ][ startCell[1] ] = 0;
+	myHeap.push([0, [startCell[0], startCell[1]]]);
+	cellsToAnimate.push([[startCell[0], startCell[1]], "searching"]);
+	while (!myHeap.isEmpty()){
+		var cell = myHeap.getMin();
+		var i = cell[1][0];
+		var j = cell[1][1];
+		if (visited[i][j]){ continue; }
+		visited[i][j] = true;
+		cellsToAnimate.push([[i, j], "visited"]);
+		if (i == endCell[0] && j == endCell[1]){
+			pathFound = true;
+			break;
+		}
+		var neighbors = getNeighbors(i, j);
+		for (var k = 0; k < neighbors.length; k++){
+			var m = neighbors[k][0];
+			var n = neighbors[k][1];
+			if (visited[m][n]){ continue; }
+			var newDistance = distances[i][j] + 1;
+			if (newDistance < distances[m][n]){
+				distances[m][n] = newDistance;
+				prev[m][n] = [i, j];
+				myHeap.push([newDistance, [m, n]]);
+				cellsToAnimate.push( [[m, n], "searching"] );
+			}
+		}
+	}
+	while ( !myHeap.isEmpty() ){
+		var cell = myHeap.getMin();
+		var i = cell[1][0];
+		var j = cell[1][1];
+		if (visited[i][j]){ continue; }
+		visited[i][j] = true;
+		cellsToAnimate.push( [[i, j], "visited"] );
+	}
+	if (pathFound) {
+		var i = endCell[0];
+		var j = endCell[1];
+		cellsToAnimate.push( [endCell, "success"] );
+		while (prev[i][j] != null){
+			var prevCell = prev[i][j];
+			i = prevCell[0];
+			j = prevCell[1];
+			cellsToAnimate.push( [[i, j], "success"] );
+		}
+	}
+	return pathFound;
+}
+
+function AStar() {
+	var pathFound = false;
+	var myHeap = new minHeap();
+	var prev = createPrev();
+	var distances = createDistances();
+	var costs = createDistances();
+	var visited = createVisited();
+	distances[ startCell[0] ][ startCell[1] ] = 0;
+	costs[ startCell[0] ][ startCell[1] ] = 0;
+	myHeap.push([0, [startCell[0], startCell[1]]]);
+	cellsToAnimate.push([[startCell[0], startCell[1]], "searching"]);
+	while (!myHeap.isEmpty()){
+		var cell = myHeap.getMin();
+		var i = cell[1][0];
+		var j = cell[1][1];
+		if (visited[i][j]){ continue; }
+		visited[i][j] = true;
+		cellsToAnimate.push([[i, j], "visited"]);
+		if (i == endCell[0] && j == endCell[1]){
+			pathFound = true;
+			break;
+		}
+		var neighbors = getNeighbors(i, j);
+		for (var k = 0; k < neighbors.length; k++){
+			var m = neighbors[k][0];
+			var n = neighbors[k][1];
+			if (visited[m][n]){ continue; }
+			var newDistance = distances[i][j] + 1;
+			if (newDistance < distances[m][n]){
+				distances[m][n] = newDistance;
+				prev[m][n] = [i, j];
+				cellsToAnimate.push( [[m, n], "searching"] );
+			}
+			var newCost = distances[i][j] + Math.abs(endCell[0] - m) + Math.abs(endCell[1] - n);
+			if (newCost < costs[m][n]){
+				costs[m][n] = newCost;
+				myHeap.push([newCost, [m, n]]);
+			}
+		}
+	}
+	while ( !myHeap.isEmpty() ){
+		var cell = myHeap.getMin();
+		var i = cell[1][0];
+		var j = cell[1][1];
+		if (visited[i][j]){ continue; }
+		visited[i][j] = true;
+		cellsToAnimate.push( [[i, j], "visited"] );
+	}
+	if (pathFound) {
+		var i = endCell[0];
+		var j = endCell[1];
+		cellsToAnimate.push( [endCell, "success"] );
+		while (prev[i][j] != null){
+			var prevCell = prev[i][j];
+			i = prevCell[0];
+			j = prevCell[1];
+			cellsToAnimate.push( [[i, j], "success"] );
 		}
 	}
 	return pathFound;
